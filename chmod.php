@@ -28,16 +28,16 @@ if (is_file($cat = __DIR__ . DIRECTORY_SEPARATOR . 'octocat.tmpl')) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
 
     <?php echo $github; ?>
-   <div class="container">
-      <div class="jumbotron">
-         <div class="container"><h1>Recursive chmod</h1></div>
-      </div>
+    <div class="container">
+        <div class="jumbotron">
+            <div class="container"><h1>Recursive chmod</h1></div>
+        </div>
 
 <?php
 
@@ -108,6 +108,6 @@ function rChmod($dir = './')
 echo rChmod('.');
 
 ?>
-   </div>
+    </div>
 </body>
 </html>
