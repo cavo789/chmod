@@ -1,6 +1,6 @@
-![Banner](images/banner.jpg)
-
 # chmod
+
+![Banner](./banner.svg)
 
 `chmod.php` will reset folder's permissions to 755 and 644 for files, this for the folder where the script is stored and any subfolders.
 
