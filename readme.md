@@ -1,5 +1,7 @@
 # chmod
 
+![php 8.2](https://img.shields.io/badge/php-8.2-brightgreen?style=flat)
+
 ![Banner](./banner.svg)
 
 `chmod.php` will reset folder's permissions to 755 and 644 for files, this for the folder where the script is stored and any subfolders.
