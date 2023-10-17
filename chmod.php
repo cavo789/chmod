@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Author : AVONTURE Christophe - https://www.avonture.be.
  *
  * Reset folder's permissions to 755 and 644 for files, this for
@@ -61,36 +61,63 @@ function rChmod($dir = './')
         }
 
         // Get the current chmod
-        $current=substr(sprintf('%o', fileperms($path)), -4);
+        $currentPermissions=substr(sprintf('%o', fileperms($path)), -4);
 
         // Determine the good permission, the one the folder/file should have
-        $attr=($path->isDir() ? '0755' : $chmodFile);
+        $chmodToApply=($path->isDir() ? '0755' : $chmodFile);
 
         if ($path->isDir()) {
             // No need to make something if the current chmod is 755 or 750
-            $continue=!in_array($current, ['0755', '0750']);
+            $continue=!in_array($currentPermissions, ['0755', '0750']);
 
             // On a Windows OS, don't bother for chmod 777
-            if ($continue && (('WIN' === strtoupper(substr(PHP_OS, 0, 3))) && ('0777' == $current))) {
+            if ($continue && (('WIN' === strtoupper(substr(PHP_OS, 0, 3))) && ('0777' == $currentPermissions))) {
                 $continue=false;
             }
         } else {
             // it's a file
-            $continue=!in_array($current, ['0666', '0644', '0640']);
+            $continue=!in_array($currentPermissions, ['0666', '0644', '0640']);
         }
 
         if (true === $continue) {
-            // The permission of the folder/file isn't correct
+            // The permission of the folder/file isn't correct, update it
+            // printf (
+            //     "The current permission for %s is %s. Try to update to %s<br/>", 
+            //     $path, 
+            //     $currentPermissions,
+            //     $chmodToApply
+            // );
 
-            chmod($path, octdec($attr));
+            try {
+                if (!chmod($path, $chmodToApply)){
+                    throw new \Exception(
+                        "The user used by your webserver can not change ".
+                        "permissions on files. In other words, that user ".
+                        "can not update the permissions on files which is, ".
+                        "in fact, a good thing. You can not use this script."
+                    );
+                };
+            } catch (\Exception $exception) {
+                die(
+                    printf(
+                        "<div style='margin-top: 5px;padding: 10px;color: #ff4300;font-family: verdana;border: 1px solid red;background-color: #fefeaf;'>%s</div>",
+                        $exception->getMessage()
+                    )
+                );
+            }
+
+            // Now, we will ensure the chmod has been correctly applied. Get the new value.
             $newchmod=substr(sprintf('%o', fileperms($path)), -4);
 
-            if ($attr != octdec($newchmod)) {
-                $sReturn .= '<li class="text-danger" style="font-size:2em;">ERROR - The current chmod for ' . $path . ' is ' . octdec($newchmod) . ' and should be ' . octdec($attr) . ' - EXITING</li>';
+
+            if ($chmodToApply != octdec($newchmod)) {
+                $sReturn .= '<li class="text-danger" style="font-size:2em;">ERROR - The current chmod for ' .
+                    $path . ' is ' . $newchmod . ' and should be ' .
+                    $chmodToApply . ' - EXITING</li>';
 
                 break;
             } else {
-                $sReturn .= '<li class="text-success">' . $path . ' is now ' . octdec($newchmod) . '</li>';
+                $sReturn .= '<li class="text-success">' . $path . ' is now ' . $newchmod . '</li>';
             }
         }
     }
